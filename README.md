@@ -12,7 +12,7 @@ By selecting the text file to be read, users may get results like :
 - frequency of a given word/expression
 - total number of words and paragraphs
 
-Furthermore, **Word Stats** provides users customizable result return methods : 
+Furthermore, **Word Stats** provides users with customizable result return methods : 
 - append results in original text file
 - output results in another text file
 
