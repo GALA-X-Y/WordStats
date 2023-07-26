@@ -42,7 +42,7 @@ Choosing set `Result Return Preference` will ask users to choose one from the fo
 3. Always Ask After Runs
 4. Never Record Result in Text File
 
-The default result return mode is 3. Always Ask After Runs. [^3]
+The default result return mode is 3: Always Ask After Runs. [^3]
 
 ## Modification 
 For users who know [*Pascal*](https://www.tutorialspoint.com/pascal/index.htm) Language and hope to :
@@ -67,26 +67,78 @@ Shows main menu for users' selection and undergoes file select section.
 This is the base procedure that control whole program workflow according to users selections and it calls most functions and procedures.
 
 **Raises:**
-- OutofRangeError - Users invalid input that mismatch from the main menu.
+- OutofRangeError - Users' invalid input that mismatch from the main menu.
 - FileNotFoundError - Users input wrong filename or Path in file select section.
 ***
     Print_PList()
 
 This is a procedure.
 
+Shows `Program Preference` menu.
 
-***
-    Word_Count()
+This is the procedure called by `Print_List()` to perform path changing and result return preference setting.
 
+**Raises:**
+- OutofRangeError - Users' invalid input that mismatch from the `Program Preference` menu.
 ***
-    Word_Freq()
+    Word_Count(rfname)
 
-***
-    Char_Freq()
-***
-    CheckWordFinishede()
+This is a procedure.
 
-[^1]: Folder wd
-[^2]: w w
-[^3]:
-[^4]:
+Count the total number of words in the selected text file.
+
+This procedure include result output section.
+
+**Parameters:**
+- rfname(String) : The file name of the selected text file.
+
+**Raises:**
+- OutofRangeError - Users' invalid input that mismatch from the result return menu.
+- FileNotFoundError - Users input wrong filename or Path in output file select section.
+***
+    Word_Freq(rfname)
+This is a procedure.
+
+Count the frequencies of input words in the selected text file.
+
+This procedure include expression input and result output sections.
+
+**Parameters:**
+- rfname(String) : The file name of the selected text file.
+
+**Raises:**
+- OutofRangeError - Users' invalid input that mismatch from the result return menu.
+- FileNotFoundError - Users input wrong filename or Path in output file select section.
+***
+    Char_Freq(rfname)
+This is a procedure.
+
+Count the frequencies of each existed letters in the selected text file.
+
+This procedure include result output section.
+
+**Parameters:**
+- rfname(String) : The file name of the selected text file.
+
+**Raises:**
+- OutofRangeError - Users' invalid input that mismatch from the result return menu.
+- FileNotFoundError - Users input wrong filename or Path in output file select section.
+***
+    CheckWordFinished(S, I)
+This is a function.
+
+Check the end of words by checking whether a digit is space, comma, or fullstop.
+
+This function is used in `Word_Count()` and `Word_Freq()`.
+
+**Parameters:**
+- S(String) : The whole string to be checked.
+- I(Integer) : The index of the digit to be checked.
+
+**Raises:**
+- OutofRangeError - The index inputted is larger than the length of the string.
+
+[^1]: The path should be the **folder** contain the text file, not the direct path to the text file. Or otherwise the program will stuck at file select section.
+[^2]: You can type "last" to refer to previous text file name input. (Cannot be use in first run)
+[^3]: This will be reset to default after the executable restart.
+[^4]: This is an academic project. **Never** use it for commercial purpose. 
