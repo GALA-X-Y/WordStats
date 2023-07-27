@@ -18,7 +18,7 @@ Furthermore, **Word Stats** provides users with customizable result return metho
 
 ## How to Use **Word Stats**
 1. Open <kbd>wordstats.exe</kbd>.
-2. Enter the **Path** of the **Folder**[^1] Contain text files to be read.
+2. Enter the **Path** of the **Folder**[^1] contain text files to be read.
 3. Select the next action to be taken from the main menu.
 > #### Main Menu
 >1. Get frequencies of letters
@@ -67,10 +67,12 @@ Shows main menu for users' selection and undergoes file select section.
 This is the base procedure that control whole program workflow according to users selections and it calls most functions and procedures.
 
 **Raises:**
-- OutofRangeError - Users' invalid input that mismatch from the main menu.
-- FileNotFoundError - Users input wrong filename or Path in file select section.
-***
-    Print_PList()
+- **OutofRangeError** - Users' invalid input that mismatch from the main menu.
+- **FileNotFoundError** - Users input wrong filename or Path in file select section.
+
+```
+Print_PList()
+```
 
 This is a procedure.
 
@@ -79,9 +81,11 @@ Shows `Program Preference` menu.
 This is the procedure called by `Print_List()` to perform path changing and result return preference setting.
 
 **Raises:**
-- OutofRangeError - Users' invalid input that mismatch from the `Program Preference` menu.
-***
-    Word_Count(rfname)
+- **OutofRangeError** - Users' invalid input that mismatch from the `Program Preference` menu.
+
+```
+Word_Count(rfname)
+```
 
 This is a procedure.
 
@@ -90,13 +94,16 @@ Count the total number of words in the selected text file.
 This procedure include result output section.
 
 **Parameters:**
-- rfname(String) : The file name of the selected text file.
+- **rfname**(String) : The file name of the selected text file.
 
 **Raises:**
-- OutofRangeError - Users' invalid input that mismatch from the result return menu.
-- FileNotFoundError - Users input wrong filename or Path in output file select section.
-***
-    Word_Freq(rfname)
+- **OutofRangeError** - Users' invalid input that mismatch from the result return menu.
+- **FileNotFoundError** - Users input wrong filename or Path in output file select section.
+
+```
+Word_Freq(rfname)
+```
+
 This is a procedure.
 
 Count the frequencies of input words in the selected text file.
@@ -104,13 +111,16 @@ Count the frequencies of input words in the selected text file.
 This procedure include expression input and result output sections.
 
 **Parameters:**
-- rfname(String) : The file name of the selected text file.
+- **rfname**(String) : The file name of the selected text file.
 
 **Raises:**
-- OutofRangeError - Users' invalid input that mismatch from the result return menu.
-- FileNotFoundError - Users input wrong filename or Path in output file select section.
-***
-    Char_Freq(rfname)
+- **OutofRangeError** - Users' invalid input that mismatch from the result return menu.
+- **FileNotFoundError** - Users input wrong filename or Path in output file select section.
+
+```
+Char_Freq(rfname)
+```
+
 This is a procedure.
 
 Count the frequencies of each existed letters in the selected text file.
@@ -118,13 +128,16 @@ Count the frequencies of each existed letters in the selected text file.
 This procedure include result output section.
 
 **Parameters:**
-- rfname(String) : The file name of the selected text file.
+- **rfname**(String) : The file name of the selected text file.
 
 **Raises:**
-- OutofRangeError - Users' invalid input that mismatch from the result return menu.
-- FileNotFoundError - Users input wrong filename or Path in output file select section.
-***
-    CheckWordFinished(S, I)
+- **OutofRangeError** - Users' invalid input that mismatch from the result return menu.
+- **FileNotFoundError** - Users input wrong filename or Path in output file select section.
+
+```
+CheckWordFinished(S, I)
+```
+
 This is a function.
 
 Check the end of words by checking whether a digit is space, comma, or fullstop.
@@ -132,13 +145,13 @@ Check the end of words by checking whether a digit is space, comma, or fullstop.
 This function is used in `Word_Count()` and `Word_Freq()`.
 
 **Parameters:**
-- S(String) : The whole string to be checked.
-- I(Integer) : The index of the digit to be checked.
+- **S**(String) : The whole string to be checked.
+- **I**(Integer) : The index of the digit to be checked.
 
 **Raises:**
-- OutofRangeError - The index inputted is larger than the length of the string.
+- **OutofRangeError** - The index inputted is larger than the length of the string.
 
-[^1]: The path should be the **folder** contain the text file, not the direct path to the text file. Or otherwise the program will stuck at file select section.
-[^2]: You can type "last" to refer to previous text file name input. (Cannot be use in first run)
-[^3]: This will be reset to default after the executable restart.
-[^4]: This is an academic project. **Never** use it for commercial purpose. 
+[^1]: The path should be the **folder** contain the text file, not the direct  path to the text file. Or otherwise the program will stuck at file select section.  
+[^2]: You can type "last" to refer to previous text file name input. (Cannot be use in first run)  
+[^3]: This will be reset to default after the executable restart.  
+[^4]: This is an academic project. **Never** use it for commercial purpose.  
