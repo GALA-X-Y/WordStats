@@ -1,7 +1,5 @@
 program wordstats;
-
-const
-  PATH = 'C:\Users\HugoLaw\Codes\Pascal\';
+uses sysutils;
 
 var
   despath, lastfilename : String;
@@ -19,8 +17,12 @@ begin
   WriteLn('Authored by Hugo Law - Version 1.1.5');
   WriteLn;
   returnmode := 3;
-  WriteLn('Please enter the destination path:');
-  ReadLn(despath);
+  repeat
+    WriteLn('Please enter the destination path:');
+    ReadLn(despath);
+  until DirectoryExists(despath);
+  if despath[Length(despath)-1] <> '\' then
+    despath := despath + '\';
   WriteLn('You may edit the destination path again in Program Preference');
   WriteLn;
 end;
@@ -43,8 +45,12 @@ begin
   WriteLn;
   if i = 1 then
     begin
-      WriteLn('Please enter the destination path:');
-      ReadLn(despath);
+      repeat
+        WriteLn('Please enter the destination path:');
+        ReadLn(despath);
+      until DirectoryExists(despath);
+      if despath[Length(despath)-1] <> '\' then
+        despath := despath + '\';
     end
   else if i = 2 then
     begin
