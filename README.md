@@ -5,11 +5,12 @@
 ## Introduction
 **Word Stats** is a composition analyzer software designed to generate statistical information about English compositions. 
 
-Features of **Word Stats** :
+[Features](https://www.youtube.com/watch?v=swrIWad6BSw) of **Word Stats** :
 - Support Batch Processing
 - Open Source
 - Using *Pascal* as Programming Language
 - Well-Structured Functions and Procedures
+- [Click](https://www.youtube.com/watch?v=swrIWad6BSw) to get more features in YouTube video.
 
 By selecting the text file to be read, users may get results like :
 - frequencies of letters
