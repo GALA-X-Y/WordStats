@@ -6,6 +6,7 @@
 **Word Stats** is a composition analyzer software designed to generate statistical information about English compositions. 
 
 Features of **Word Stats** :
+- Support Batch Processing
 - Open Source
 - Using *Pascal* as Programming Language
 - Well-Structured Functions and Procedures
@@ -27,30 +28,34 @@ Furthermore, **Word Stats** provides users with customizable result return metho
 >1. Get frequencies of letters
 >2. Get total number of words and paragraphs
 >3. Get frequency of a given word/expression
->4. Program Preference (See "**Change Path and Output Mode**")
+>4. Program Preference (See "**Change Path, Output Mode and Batch Mode**")
 >5. Quit
-4. Enter the file name of text file to be read. [^2]
+4. Select text file to be read. (Not in Batch Mode) [^2]
 5. Result will be shown on terminal, select the output mode (If have not been set in `Program Preference`)
 6. To exit the program, choose `Quit` option in main menu.
-### Change Path and Output Mode
+### Change Path, Output Mode and Batch Mode
 By choosing `Program Preference` in main menu, another menu will be shown.
 1. Change Destination Path [^1]
 2. Result Return Preference
+3. Batch Processing Preference [^3]
 
 Choosing `Change Destination Path` will ask users to enter a new destination Path.
 
-Choosing set `Result Return Preference` will ask users to choose one from the followings :
+Choosing `Result Return Preference` will ask users to choose one from the followings :
 1. Always Append Result in Original File
 2. Always Return Result in Another File
 3. Always Ask After Runs
 4. Never Record Result in Text File
 
-The default result return mode is 3: Always Ask After Runs. [^3]
+The default result return mode is 3: Always Ask After Runs. [^4]
+
+Choosing `Batch Processing Preference` will switch Batch Processing mode on and off. The program will ask users to choose a Return Mode before perform any action. [^3] 
+Under Batch Mode, **all** text files in the destination path will be read in **every** action taken.
 
 ## Modification 
 For users who know [*Pascal*](https://www.tutorialspoint.com/pascal/index.htm) Language and hope to :
 - perform personal modification.
-- use functions and proceduces from the source file in other program. [^4]
+- use functions and proceduces from the source file in other program. [^5]
 
 You can edit the source file <kbd>wordstats.pas</kbd> in any IDE you like.
 
@@ -61,7 +66,9 @@ Make sure you have a *Pascal* compiler software. Here are some examples :
 - [GNU Pascal](https://www.gnu-pascal.de/gpc/h-index.html)
 
 ### Component Functions and Procedures
-    Print_List()
+```
+Print_List()
+```
 
 This is a procedure.
 
@@ -71,7 +78,6 @@ This is the base procedure that control whole program workflow according to user
 
 **Raises:**
 - **OutofRangeError** - Users' invalid input that mismatch from the main menu.
-- **FileNotFoundError** - Users input wrong filename or Path in file select section.
 
 ```
 Print_PList()
@@ -79,9 +85,9 @@ Print_PList()
 
 This is a procedure.
 
-Shows `Program Preference` menu.
+Shows `Program Preference` menu and control setting of `Destination Path`, `Return Mode` and `Batch Processing Mode`.
 
-This is the procedure called by `Print_List()` to perform path changing and result return preference setting.
+This procedure is used in `Print_List()`
 
 **Raises:**
 - **OutofRangeError** - Users' invalid input that mismatch from the `Program Preference` menu.
@@ -101,7 +107,6 @@ This procedure include result output section.
 
 **Raises:**
 - **OutofRangeError** - Users' invalid input that mismatch from the result return menu.
-- **FileNotFoundError** - Users input wrong filename or Path in output file select section.
 
 ```
 Word_Freq(rfname)
@@ -118,7 +123,6 @@ This procedure include expression input and result output sections.
 
 **Raises:**
 - **OutofRangeError** - Users' invalid input that mismatch from the result return menu.
-- **FileNotFoundError** - Users input wrong filename or Path in output file select section.
 
 ```
 Char_Freq(rfname)
@@ -135,7 +139,6 @@ This procedure include result output section.
 
 **Raises:**
 - **OutofRangeError** - Users' invalid input that mismatch from the result return menu.
-- **FileNotFoundError** - Users input wrong filename or Path in output file select section.
 
 ```
 CheckWordFinished(S, I)
@@ -151,10 +154,53 @@ This function is used in `Word_Count()` and `Word_Freq()`.
 - **S**(String) : The whole string to be checked.
 - **I**(Integer) : The index of the digit to be checked.
 
+**Returns**
+- `True` if the digit is space, comma, or fullstop. `False` otherwise.
+
+**Returns Type**
+- Boolean
+
 **Raises:**
 - **OutofRangeError** - The index inputted is larger than the length of the string.
 
+```
+DPathChange()
+```
+
+This is a procedure.
+
+Change the destination path and load all *txt* files in destination path to `Namelist`.
+
+This procedure is used in program initialization and `Print_PList()`.
+
+**Raises:**
+- **DirectoryNotFoundError** - Users input wrong path that not exist.
+- **OutofRangeError** - The number of *txt* files in the destination path is larger than the maximum of **50**.
+
+```
+Select_File(M, Tfile)
+```
+This is a function.
+
+Load the *txt* file names from `Namelist` and output as a menu for file selection.
+
+This function is used in `Word_Count()`, `Word_Freq()`, `Char_Freq()` and `Print_List()`.
+
+**Parameters:**
+- **M**(Integer) : The mode of openning a file, 1 for reading and 2 for output.
+- **Tfile**(Text) : The text variable for the file, call by reference.
+
+**Returns**
+- The whole path of the textfile.
+
+**Returns Type**
+- String
+
+**Raises:**
+- **OutofRangeError** - The index inputted is larger than the menu shown.
+
 [^1]: The path should be the **folder** contain the text file, not the direct  path to the text file. Or otherwise the program will stuck at file select section.  
-[^2]: You can type "last" to refer to previous text file name input. (Cannot be use in first run)  
-[^3]: This will be reset to default after the executable restart.  
-[^4]: This is an academic project. **Never** use it for commercial purpose.  
+[^2]: You can type "l" to refer to the text file from previous run. (Cannot be use in first run)    
+[^3]: When Batch Mode is on, return mode cannot be changed and Option "Always Ask" is unusable.  
+[^4]: This will be reset to default after the executable restart.  
+[^5]: All copying of source code should follow the GNU License.  
