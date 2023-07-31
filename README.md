@@ -1,6 +1,6 @@
-# **Word Stats 1.1.5**
+# **Word Stats 1.2.2**
 
-<img src="https://i.imgur.com/Ke2O1rm.png" width="250">
+<img src="https://i.imgur.com/fB0GpnW.png" width="250">
 
 ## Introduction
 **Word Stats** is a composition analyzer software designed to generate statistical information about English compositions. 
