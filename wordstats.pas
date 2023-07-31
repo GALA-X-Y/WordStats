@@ -1,10 +1,46 @@
 program wordstats;
 uses sysutils;
 
+const
+  PATH = 'C:\Users\HugoLaw\Codes\Pascal\';
+
 var
   despath, lastfilename : String;
-  returnmode : Integer;
+  returnmode, listlength : Integer;
   readfile, outfile : Text;
+  Batch : Boolean;
+  Namelist : array[1..50] of String;
+
+procedure DPathChange;
+var
+  i : Integer;
+  temp : String;
+  SR : TRawbyteSearchRec;
+begin
+  repeat
+    WriteLn('Please enter the destination path:');
+    ReadLn(despath);
+  until DirectoryExists(despath);
+  despath := IncludeTrailingPathDelimiter(despath);
+  for i := 1 to 50 do
+    Namelist[i] := '';
+  if FindFirst(despath + '*', faAnyFile and (not faDirectory), SR) = 0 then
+    begin
+      i := 1;
+      repeat
+        temp := AnsiToUtf8(SR.Name);
+        if Copy(temp, Length(temp)-2, 3) = 'txt' then
+          begin
+            Namelist[i] := temp;
+            i := i + 1;
+          end;
+      until FindNext(SR) <> 0;
+      FindClose(SR);
+      listlength := i - 1;
+    end
+  else
+    DPathChange;
+end;
 
 procedure Print_Heading;
 begin
@@ -17,12 +53,10 @@ begin
   WriteLn('Authored by Hugo Law - Version 1.1.5');
   WriteLn;
   returnmode := 3;
-  repeat
-    WriteLn('Please enter the destination path:');
-    ReadLn(despath);
-  until DirectoryExists(despath);
-  if despath[Length(despath)-1] <> '\' then
-    despath := despath + '\';
+  Batch := False;
+  lastfilename := '';
+
+  DPathChange;
   WriteLn('You may edit the destination path again in Program Preference');
   WriteLn;
 end;
@@ -34,41 +68,106 @@ var
 begin
   WriteLn('--Program Preference--');
   WriteLn('1. Change Destination Path');
-  WriteLn('2. Result Return Preference');
-  WriteLn('3. Quit');
-  WriteLn;
-  repeat
-    Write('Enter your choice: ');
-    ReadLn(Reading);
-    Val(Reading, i, error)
-  until (error = 0) and (i <= 3) and (i >= 1);
-  WriteLn;
-  if i = 1 then
+  if Batch then
     begin
-      repeat
-        WriteLn('Please enter the destination path:');
-        ReadLn(despath);
-      until DirectoryExists(despath);
-      if despath[Length(despath)-1] <> '\' then
-        despath := despath + '\';
-    end
-  else if i = 2 then
-    begin
-      WriteLn('--Result Return Preference--');
-      WriteLn('1. Always Append Result in Original File');
-      WriteLn('2. Always Return Result in New File');
-      WriteLn('3. Always Ask After Runs');
-      WriteLn('4. Never Record Result in Text File');
+      WriteLn('2. Batch Processing Preference');
+      WriteLn('3. Quit');
       WriteLn;
       repeat
         Write('Enter your choice: ');
         ReadLn(Reading);
-        Val(Reading, returnmode, error)
-      until (error = 0) and (returnmode <= 4) and (returnmode >= 1);
+        Val(Reading, i, error)
+      until (error = 0) and (i <= 3) and (i >= 1);
+      WriteLn;
+      if i = 1 then
+        begin
+          DPathChange;
+        end
+      else if i = 2 then
+        begin
+          WriteLn('Batch Processing Off.');
+          Batch := not Batch;
+        end;
+      WriteLn;
+      if not (i = 3) then
+        Print_PList;
+    end
+  else
+    begin
+      WriteLn('2. Result Return Preference');
+      WriteLn('3. Batch Processing Preference');
+      WriteLn('4. Quit');
+      WriteLn;
+      repeat
+        Write('Enter your choice: ');
+        ReadLn(Reading);
+        Val(Reading, i, error)
+      until (error = 0) and (i <= 4) and (i >= 1);
+      WriteLn;
+      if i = 1 then
+        begin
+          DPathChange;
+        end
+      else if (i = 2) or (i = 3) then
+        begin
+          if i = 3 then
+            begin
+              WriteLn('Batch Processing Off.');
+              Batch := not Batch;
+              WriteLn;
+            end;
+          WriteLn('--Result Return Preference--');
+          WriteLn('1. Always Append Result in Original File');
+          WriteLn('2. Always Return Result in New File');
+          if not Batch then
+            WriteLn('3. Always Ask After Runs');
+          WriteLn('4. Never Record Result in Text File');
+          WriteLn;
+          repeat
+            Write('Enter your choice: ');
+            ReadLn(Reading);
+            Val(Reading, returnmode, error);
+            if (Batch) and (returnmode = 3) then
+              returnmode := 5;
+          until (error = 0) and (returnmode <= 4) and (returnmode >= 1);
+        end;
+      WriteLn;
+      if not (i = 4) then
+        Print_PList;
+    end;
+end;
+
+function Select_File(m : Integer;var tfile : Text) : String;
+var
+  i, ri, error : Integer;
+  Reading, filename : String;
+begin
+  WriteLn('--Select Text File--');
+  for i := 1 to listlength do
+    begin
+      WriteLn(i,'. ',Namelist[i]);
     end;
   WriteLn;
-  if not (i = 3) then
-    Print_PList;
+  repeat
+    Write('Select a text file by index: ');
+    ReadLn(Reading);
+    if (lastfilename <> '') and (Reading = 'l') then
+      filename := lastfilename
+    else
+      Val(Reading, ri, error);
+  until (error = 0) and (ri < i) and (ri >= 1);
+  if not (Reading = 'l') then
+    begin
+      filename := Namelist[ri];
+      lastfilename := filename;
+    end;
+  filename := despath + filename;
+  Assign(tfile, filename);
+  if m = 1 then
+    Reset(tfile);
+  if m = 2 then
+    Append(tfile);
+  Select_File := filename;
 end;
 
 function CheckWordFinished(S: String; I : Integer): Boolean;
@@ -80,7 +179,7 @@ procedure Word_Count(rfname : String);
 var
   wordno, paghno, i, error : Integer;
   temp, ofname, Reading : String;
-  duallines, dualdull, f : Boolean;
+  duallines, dualdull : Boolean;
 begin
   paghno := 1;
   wordno := 1;
@@ -141,20 +240,7 @@ begin
     end
   else if i = 2 then
     begin
-      f := True;
-      repeat
-        if f then
-          f := False
-        else
-          WriteLn('File is not found.');
-        Write('Enter the file name : ');
-        ReadLn(ofname);
-        ofname := despath + ofname;
-        Assign(outfile, ofname);
-        {$i-}
-        Append(outfile);
-        {$i+}
-      until IOResult = 0;
+      ofname := Select_File(2, outfile);
       WriteLn(outfile, rfname);
       WriteLn(outfile, 'Number of Words: ',wordno);
       WriteLn(outfile, 'Number of Paragraphs: ',paghno);
@@ -168,7 +254,6 @@ procedure Word_Freq(rfname : String);
 var
   wordno, i, error : Integer;
   temp, ofname, Reading : String;
-  f : Boolean;
 begin
   Write('Enter the Word/Expression: ');
   ReadLn(Reading);
@@ -211,20 +296,7 @@ begin
     end
   else if i = 2 then
     begin
-      f := True;
-      repeat
-        if f then
-          f := False
-        else
-          WriteLn('File is not found.');
-        Write('Enter the file name : ');
-        ReadLn(ofname);
-        ofname := despath + ofname;
-        Assign(outfile, ofname);
-        {$i-}
-        Append(outfile);
-        {$i+}
-      until IOResult = 0;
+      ofname := Select_File(2, outfile);
       WriteLn(outfile, rfname);
       WriteLn(outfile, 'Number of "',Reading,'": ', wordno);
       WriteLn(outfile);
@@ -240,7 +312,6 @@ var
   Num : array[48..57] of Integer;
   code, i, error, lnc : Integer;
   temp, ofname, Reading : String;
-  f : Boolean;
 begin
   for i := 48 to 57 do
     Num[i] := 0;
@@ -380,20 +451,7 @@ begin
     end
   else if i = 2 then
     begin
-      f := True;
-      repeat
-        if f then
-          f := False
-        else
-          WriteLn('File is not found.');
-        Write('Enter the file name : ');
-        ReadLn(ofname);
-        ofname := despath + ofname;
-        Assign(outfile, ofname);
-        {$i-}
-        Append(outfile);
-        {$i+}
-      until IOResult = 0;
+      ofname := Select_File(2, outfile);
       WriteLn(outfile, rfname);
       lnc := 1;
       for i := 48 to 57 do
@@ -450,8 +508,7 @@ end;
 procedure Print_List;
 var
   Reading, filename : String;
-  i, error : Integer;
-  f : Boolean;
+  lc, i, error : Integer;
 begin
   WriteLn('--Program Menu--');
   WriteLn('1. Check Frequencies of Letters');
@@ -468,32 +525,36 @@ begin
   WriteLn;
   if i < 4 then
     begin
-      f := True;
-      repeat
-        if f then
-          f := False
-        else
-          WriteLn('File is not found.');
-        Write('Enter the file name : ');
-        ReadLn(filename);
-        if (lastfilename <> '') and (filename = 'last') then
-          filename := lastfilename
-        else
-          lastfilename := filename;
-        filename := despath + filename;
-        Assign(readfile, filename);
-        {$i-}
-        Reset(readfile);
-        {$i+}
-      until IOResult = 0;
-      WriteLn;
-      if i = 1 then
-        Char_Freq(filename);
-      if i = 2 then
-        Word_Count(filename);
-      if i = 3 then
-        Word_Freq(filename);
-      Close(readfile);
+      if Batch then
+        begin
+          for lc := 1 to listlength do
+            begin
+              WriteLn('File ',lc,' - ',Namelist[lc]);
+              filename := despath + Namelist[lc];
+              Assign(readfile, filename);
+              Reset(readfile);
+              WriteLn;
+              if i = 1 then
+                Char_Freq(filename);
+              if i = 2 then
+                Word_Count(filename);
+              if i = 3 then
+                Word_Freq(filename);
+              Close(readfile);
+            end;
+        end
+      else
+        begin
+          filename := Select_File(1, readfile);
+          WriteLn;
+          if i = 1 then
+            Char_Freq(filename);
+          if i = 2 then
+            Word_Count(filename);
+          if i = 3 then
+            Word_Freq(filename);
+          Close(readfile);
+        end;
     end;
   if i = 4 then
     Print_PList;
@@ -503,6 +564,5 @@ end;
 
 begin
   Print_Heading;
-  lastfilename := '';
   Print_List;
 end.
