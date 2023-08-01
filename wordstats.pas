@@ -5,7 +5,7 @@ const
   PATH = 'C:\Users\HugoLaw\Codes\Pascal\';
 
 var
-  despath, lastfilename, outfilename : String;
+  despath, lastfilename, outfilename, BatchSearch : String;
   returnmode, listlength : Integer;
   readfile, outfile : Text;
   Batch : Boolean;
@@ -74,10 +74,16 @@ begin
     end;
   WriteLn;
   repeat
+    if not(lastfilename = '') then
+      WriteLn('You may type ''last'' to refer to previous text file');
     Write('Select a text file by index: ');
     ReadLn(Reading);
-    if (lastfilename <> '') and (Reading = 'l') then
-      filename := lastfilename
+    if (not (lastfilename = '')) and (Reading = 'l') then
+      begin
+        filename := lastfilename;
+        error := 0;
+        ri := 1;
+      end
     else
       Val(Reading, ri, error);
   until (error = 0) and (ri <= i) and (ri >= 1);
@@ -170,9 +176,13 @@ begin
             begin
               WriteLn;
               outfilename := Select_File(3, tempfile);
+              BatchSearch := '';
             end
           else
-            outfilename := '';
+            begin
+              outfilename := '';
+              BatchSearch := '';
+            end;
         end;
       WriteLn;
       if not (i = 4) then
@@ -182,7 +192,7 @@ end;
 
 function CheckWordFinished(S: String; I : Integer): Boolean;
 begin
-  CheckWordFinished :=  (S[I] = ' ') or (S[I] = ',') or (S[I] = '.')
+  CheckWordFinished :=  (S[I] = ' ') or (S[I] = ',') or (S[I] = '.') or (S[I] = '?') or (S[I] = '!')
 end;
 
 procedure Word_Count(rfname : String);
@@ -581,14 +591,17 @@ begin
       else
         begin
           filename := Select_File(1, readfile);
-          WriteLn;
-          if i = 1 then
-            Char_Freq(filename);
-          if i = 2 then
-            Word_Count(filename);
-          if i = 3 then
-            Word_Freq(filename);
-          Close(readfile);
+          if not ((returnmode = 2) and (filename = outfilename)) then
+            begin
+              WriteLn;
+              if i = 1 then
+                Char_Freq(filename);
+              if i = 2 then
+                Word_Count(filename);
+              if i = 3 then
+                Word_Freq(filename);
+              Close(readfile);
+            end;
         end;
     end;
   if i = 4 then
