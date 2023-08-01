@@ -1,8 +1,8 @@
 program wordstats;
 uses sysutils;
 
-const
-  PATH = 'C:\Users\HugoLaw\Codes\Pascal\';
+//PATH = C:\Users\HugoLaw\Codes\Pascal\
+//This Path is for my personal use only.
 
 var
   despath, lastfilename, outfilename, BatchSearch : String;
@@ -75,7 +75,7 @@ begin
   WriteLn;
   repeat
     if not(lastfilename = '') then
-      WriteLn('You may type ''last'' to refer to previous text file');
+      WriteLn('You may type ''l'' to refer to previous text file');
     Write('Select a text file by index: ');
     ReadLn(Reading);
     if (not (lastfilename = '')) and (Reading = 'l') then
@@ -283,8 +283,14 @@ var
   temp, ofname, Reading : String;
 begin
   wordno := 0;
-  Write('Enter the Word/Expression: ');
-  ReadLn(Reading);
+  if BatchSearch = '' then
+    begin
+      Write('Enter the Word/Expression: ');
+      ReadLn(Reading);
+      WriteLn;
+    end
+  else
+    Reading := BatchSearch;
   while not Eof(readfile) do
     begin
       ReadLn(readfile, temp);
@@ -295,7 +301,6 @@ begin
           temp := Copy(temp, (Pos(Reading, temp) + Length(Reading)), (Length(temp) - Pos(Reading, temp) - Length(Reading) + 1))
         end;
     end;
-  WriteLn;
   WriteLn('Number of "',Reading,'": ', wordno);
   WriteLn;
   i := returnmode;
@@ -369,50 +374,47 @@ begin
     end;
   lnc := 1;
   for i := 48 to 57 do
-    if Num[i] <> 0 then
-      begin
-        Write('"',Chr(i),'" : ',Num[i]:3);
-        if lnc < 3 then
-          begin
-            lnc := lnc + 1;
-            Write(' | ');
-          end
-        else
-          begin
-            lnc := 1;
-            WriteLn;
-          end;
-      end;
+    begin
+      Write('"',Chr(i),'" : ',Num[i]:3);
+      if lnc < 5 then
+        begin
+          lnc := lnc + 1;
+          Write(' | ');
+        end
+      else
+        begin
+          lnc := 1;
+          WriteLn;
+        end;
+    end;
   for i := 65 to 90 do
-    if Upcase[i] <> 0 then
-      begin
-        Write('"',Chr(i),'" : ',Upcase[i]:3);
-        if lnc < 3 then
-          begin
-            lnc := lnc + 1;
-            Write(' | ');
-          end
-        else
-          begin
-            lnc := 1;
-            WriteLn;
-          end;
-      end;
+    begin
+      Write('"',Chr(i),'" : ',Upcase[i]:3);
+      if lnc < 5 then
+        begin
+          lnc := lnc + 1;
+          Write(' | ');
+        end
+      else
+        begin
+          lnc := 1;
+          WriteLn;
+        end;
+    end;
   for i := 97 to 122 do
-    if Downcase[i] <> 0 then
-      begin
-        Write('"',Chr(i),'" : ',Downcase[i]:3);
-        if lnc < 3 then
-          begin
-            lnc := lnc + 1;
-            Write(' | ');
-          end
-        else
-          begin
-            lnc := 1;
-            WriteLn;
-          end;
-      end;
+    begin
+      Write('"',Chr(i),'" : ',Downcase[i]:3);
+      if lnc < 5 then
+        begin
+          lnc := lnc + 1;
+          Write(' | ');
+        end
+      else
+        begin
+          lnc := 1;
+          WriteLn;
+        end;
+    end;
   WriteLn;
   WriteLn;
   i := returnmode;
@@ -439,50 +441,47 @@ begin
       WriteLn(readfile);
       lnc := 1;
       for i := 48 to 57 do
-        if Num[i] <> 0 then
-          begin
-            Write(readfile, '"',Chr(i),'" : ',Num[i]:3);
-            if lnc < 3 then
-              begin
-                lnc := lnc + 1;
-                Write(readfile, ' | ');
-              end
-            else
-              begin
-                lnc := 1;
-                WriteLn(readfile);
-              end;
-          end;
+        begin
+          Write(readfile, '"',Chr(i),'" : ',Num[i]:3);
+          if lnc < 5 then
+            begin
+              lnc := lnc + 1;
+              Write(readfile, ' | ');
+            end
+          else
+            begin
+              lnc := 1;
+              WriteLn(readfile);
+            end;
+        end;
       for i := 65 to 90 do
-        if Upcase[i] <> 0 then
-          begin
-            Write(readfile, '"',Chr(i),'" : ',Upcase[i]:3);
-            if lnc < 3 then
-              begin
-                lnc := lnc + 1;
-                Write(readfile, ' | ');
-              end
-            else
-              begin
-                lnc := 1;
-                WriteLn(readfile);
-              end;
-          end;
+        begin
+          Write(readfile, '"',Chr(i),'" : ',Upcase[i]:3);
+          if lnc < 5 then
+            begin
+              lnc := lnc + 1;
+              Write(readfile, ' | ');
+            end
+          else
+            begin
+              lnc := 1;
+              WriteLn(readfile);
+            end;
+        end;
       for i := 97 to 122 do
-        if Downcase[i] <> 0 then
-          begin
-            Write(readfile, '"',Chr(i),'" : ',Downcase[i]:3);
-            if lnc < 3 then
-              begin
-                lnc := lnc + 1;
-                Write(readfile, ' | ');
-              end
-            else
-              begin
-                lnc := 1;
-                WriteLn(readfile);
-              end;
-          end;
+        begin
+          Write(readfile, '"',Chr(i),'" : ',Downcase[i]:3);
+          if lnc < 5 then
+            begin
+              lnc := lnc + 1;
+              Write(readfile, ' | ');
+            end
+          else
+            begin
+              lnc := 1;
+              WriteLn(readfile);
+            end;
+        end;
     end
   else if i = 2 then
     begin
@@ -497,50 +496,47 @@ begin
       WriteLn(outfile, rfname);
       lnc := 1;
       for i := 48 to 57 do
-        if Num[i] <> 0 then
-          begin
-            Write(outfile, '"',Chr(i),'" : ',Num[i]:3);
-            if lnc < 3 then
-              begin
-                lnc := lnc + 1;
-                Write(outfile, ' | ');
-              end
-            else
-              begin
-                lnc := 1;
-                WriteLn(outfile);
-              end;
-          end;
+        begin
+          Write(outfile, '"',Chr(i),'" : ',Num[i]:3);
+          if lnc < 5 then
+            begin
+              lnc := lnc + 1;
+              Write(outfile, ' | ');
+            end
+          else
+            begin
+              lnc := 1;
+              WriteLn(outfile);
+            end;
+        end;
       for i := 65 to 90 do
-        if Upcase[i] <> 0 then
-          begin
-            Write(outfile, '"',Chr(i),'" : ',Upcase[i]:3);
-            if lnc < 3 then
-              begin
-                lnc := lnc + 1;
-                Write(outfile, ' | ');
-              end
-            else
-              begin
-                lnc := 1;
-                WriteLn(outfile);
-              end;
-          end;
+        begin
+          Write(outfile, '"',Chr(i),'" : ',Upcase[i]:3);
+          if lnc < 5 then
+            begin
+              lnc := lnc + 1;
+              Write(outfile, ' | ');
+            end
+          else
+            begin
+              lnc := 1;
+              WriteLn(outfile);
+            end;
+        end;
       for i := 97 to 122 do
-        if Downcase[i] <> 0 then
-          begin
-            Write(outfile, '"',Chr(i),'" : ',Downcase[i]:3);
-            if lnc < 3 then
-              begin
-                lnc := lnc + 1;
-                Write(outfile, ' | ');
-              end
-            else
-              begin
-                lnc := 1;
-                WriteLn(outfile);
-              end;
-          end;
+        begin
+          Write(outfile, '"',Chr(i),'" : ',Downcase[i]:3);
+          if lnc < 5 then
+            begin
+              lnc := lnc + 1;
+              Write(outfile, ' | ');
+            end
+          else
+            begin
+              lnc := 1;
+              WriteLn(outfile);
+            end;
+        end;
       WriteLn(outfile);
       Close(outfile);
       WriteLn;
@@ -569,6 +565,12 @@ begin
     begin
       if Batch then
         begin
+          if i = 3 then
+            begin
+              Write('Enter the Word/Expression: ');
+              ReadLn(BatchSearch);
+              WriteLn;
+            end;
           for lc := 1 to listlength do
             begin
               filename := despath + Namelist[lc];
@@ -584,6 +586,7 @@ begin
                     Word_Count(filename);
                   if i = 3 then
                     Word_Freq(filename);
+                  WriteLn;
                   Close(readfile);
                 end;
             end;
