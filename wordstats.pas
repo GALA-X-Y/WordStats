@@ -5,7 +5,7 @@ const
   PATH = 'C:\Users\HugoLaw\Codes\Pascal\';
 
 var
-  despath, lastfilename : String;
+  despath, lastfilename, outfilename : String;
   returnmode, listlength : Integer;
   readfile, outfile : Text;
   Batch : Boolean;
@@ -50,21 +50,57 @@ begin
   WriteLn('  YbdPYbdP   Yb   dP 88"Yb   8I  dY     o.`Y8b   88    dP__Yb    88   o.`Y8b ');
   WriteLn('   YP  YP     YbodP  88  Yb 8888Y"      8bodP''   88   dP""""Yb   88   8bodP'' ');
   WriteLn;
-  WriteLn('Authored by Hugo Law - Version 1.1.5');
+  WriteLn('Authored by Hugo Law - Version 1.2.2');
   WriteLn;
   returnmode := 3;
   Batch := False;
   lastfilename := '';
+  outfilename := '';
 
   DPathChange;
   WriteLn('You may edit the destination path again in Program Preference');
   WriteLn;
 end;
 
+function Select_File(m : Integer;var tfile : Text) : String;
+var
+  i, ri, error : Integer;
+  Reading, filename : String;
+begin
+  WriteLn('--Select Text File--');
+  for i := 1 to listlength do
+    begin
+      WriteLn(i,'. ',Namelist[i]);
+    end;
+  WriteLn;
+  repeat
+    Write('Select a text file by index: ');
+    ReadLn(Reading);
+    if (lastfilename <> '') and (Reading = 'l') then
+      filename := lastfilename
+    else
+      Val(Reading, ri, error);
+  until (error = 0) and (ri <= i) and (ri >= 1);
+  if not (Reading = 'l') then
+    begin
+      filename := Namelist[ri];
+      lastfilename := filename;
+    end;
+  filename := despath + filename;
+  if m < 3 then
+    Assign(tfile, filename);
+  if m = 1 then
+    Reset(tfile);
+  if m = 2 then
+    Append(tfile);
+  Select_File := filename
+end;
+
 procedure Print_PList;
 var
   Reading : String;
   i, error : Integer;
+  tempfile : Text;
 begin
   WriteLn('--Program Preference--');
   WriteLn('1. Change Destination Path');
@@ -112,7 +148,7 @@ begin
         begin
           if i = 3 then
             begin
-              WriteLn('Batch Processing Off.');
+              WriteLn('Batch Processing On.');
               Batch := not Batch;
               WriteLn;
             end;
@@ -130,44 +166,18 @@ begin
             if (Batch) and (returnmode = 3) then
               returnmode := 5;
           until (error = 0) and (returnmode <= 4) and (returnmode >= 1);
+          if returnmode = 2 then
+            begin
+              WriteLn;
+              outfilename := Select_File(3, tempfile);
+            end
+          else
+            outfilename := '';
         end;
       WriteLn;
       if not (i = 4) then
         Print_PList;
     end;
-end;
-
-function Select_File(m : Integer;var tfile : Text) : String;
-var
-  i, ri, error : Integer;
-  Reading, filename : String;
-begin
-  WriteLn('--Select Text File--');
-  for i := 1 to listlength do
-    begin
-      WriteLn(i,'. ',Namelist[i]);
-    end;
-  WriteLn;
-  repeat
-    Write('Select a text file by index: ');
-    ReadLn(Reading);
-    if (lastfilename <> '') and (Reading = 'l') then
-      filename := lastfilename
-    else
-      Val(Reading, ri, error);
-  until (error = 0) and (ri < i) and (ri >= 1);
-  if not (Reading = 'l') then
-    begin
-      filename := Namelist[ri];
-      lastfilename := filename;
-    end;
-  filename := despath + filename;
-  Assign(tfile, filename);
-  if m = 1 then
-    Reset(tfile);
-  if m = 2 then
-    Append(tfile);
-  Select_File := filename;
 end;
 
 function CheckWordFinished(S: String; I : Integer): Boolean;
@@ -240,7 +250,14 @@ begin
     end
   else if i = 2 then
     begin
-      ofname := Select_File(2, outfile);
+      if outfilename <> '' then
+        begin
+          ofname := outfilename;
+          Assign(outfile, ofname);
+          Append(outfile)
+        end
+      else
+        ofname := Select_File(2, outfile);
       WriteLn(outfile, rfname);
       WriteLn(outfile, 'Number of Words: ',wordno);
       WriteLn(outfile, 'Number of Paragraphs: ',paghno);
@@ -255,6 +272,7 @@ var
   wordno, i, error : Integer;
   temp, ofname, Reading : String;
 begin
+  wordno := 0;
   Write('Enter the Word/Expression: ');
   ReadLn(Reading);
   while not Eof(readfile) do
@@ -296,7 +314,14 @@ begin
     end
   else if i = 2 then
     begin
-      ofname := Select_File(2, outfile);
+      if outfilename <> '' then
+        begin
+          ofname := outfilename;
+          Assign(outfile, ofname);
+          Append(outfile)
+        end
+      else
+        ofname := Select_File(2, outfile);
       WriteLn(outfile, rfname);
       WriteLn(outfile, 'Number of "',Reading,'": ', wordno);
       WriteLn(outfile);
@@ -451,7 +476,14 @@ begin
     end
   else if i = 2 then
     begin
-      ofname := Select_File(2, outfile);
+      if outfilename <> '' then
+        begin
+          ofname := outfilename;
+          Assign(outfile, ofname);
+          Append(outfile)
+        end
+      else
+        ofname := Select_File(2, outfile);
       WriteLn(outfile, rfname);
       lnc := 1;
       for i := 48 to 57 do
@@ -529,18 +561,21 @@ begin
         begin
           for lc := 1 to listlength do
             begin
-              WriteLn('File ',lc,' - ',Namelist[lc]);
               filename := despath + Namelist[lc];
-              Assign(readfile, filename);
-              Reset(readfile);
-              WriteLn;
-              if i = 1 then
-                Char_Freq(filename);
-              if i = 2 then
-                Word_Count(filename);
-              if i = 3 then
-                Word_Freq(filename);
-              Close(readfile);
+              if not ((returnmode = 2) and (filename = outfilename)) then
+                begin
+                  WriteLn('File ',lc,' - ',Namelist[lc]);
+                  Assign(readfile, filename);
+                  Reset(readfile);
+                  WriteLn;
+                  if i = 1 then
+                    Char_Freq(filename);
+                  if i = 2 then
+                    Word_Count(filename);
+                  if i = 3 then
+                    Word_Freq(filename);
+                  Close(readfile);
+                end;
             end;
         end
       else
