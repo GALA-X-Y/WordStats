@@ -37,6 +37,8 @@ begin
       until FindNext(SR) <> 0;
       FindClose(SR);
       listlength := i - 1;
+      if listlength = 0 then
+        DPathChange;
     end
   else
     DPathChange;
@@ -50,7 +52,7 @@ begin
   WriteLn('  YbdPYbdP   Yb   dP 88"Yb   8I  dY     o.`Y8b   88    dP__Yb    88   o.`Y8b ');
   WriteLn('   YP  YP     YbodP  88  Yb 8888Y"      8bodP''   88   dP""""Yb   88   8bodP'' ');
   WriteLn;
-  WriteLn('Authored by Hugo Law - Version 1.2.2');
+  WriteLn('Authored by Hugo Law - Version 1.2.3');
   WriteLn;
   returnmode := 3;
   Batch := False;
@@ -150,7 +152,11 @@ begin
         begin
           DPathChange;
         end
-      else if (i = 2) or (i = 3) then
+      else if ((i = 3) and (listlength <= 1)) then
+        begin
+          WriteLn('There is only one file. Batch Processing remains Off.');
+        end
+      else if (i = 2) or ((i = 3) and (listlength > 1)) then
         begin
           if i = 3 then
             begin
@@ -192,7 +198,7 @@ end;
 
 function CheckWordFinished(S: String; I : Integer): Boolean;
 begin
-  CheckWordFinished :=  (S[I] = ' ') or (S[I] = ',') or (S[I] = '.') or (S[I] = '?') or (S[I] = '!')
+  CheckWordFinished :=  (S[I] = ' ') or (S[I] = ',') or (S[I] = '.') or (S[I] = '?') or (S[I] = '!') or (S[I] = ':')
 end;
 
 procedure Word_Count(rfname : String);
