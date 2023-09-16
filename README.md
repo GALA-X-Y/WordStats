@@ -1,6 +1,6 @@
-# **Word Stats 1.2.2**
+# **Word Stats 1.2.3**
 
-<img src="https://i.imgur.com/fB0GpnW.png" width="250">
+<img src="https://imgur.com/I9Kn2Wa.png" width="250">
 
 ## Introduction
 **Word Stats** is a composition analyzer software designed to generate statistical information about English compositions. 
@@ -50,7 +50,7 @@ Choosing `Result Return Preference` will ask users to choose one from the follow
 
 The default result return mode is 3: Always Ask After Runs. [^4]
 
-Choosing `Batch Processing Preference` will switch Batch Processing mode on and off. The program will ask users to choose a Return Mode before perform any action. [^3] 
+Choosing `Batch Processing Preference` will switch Batch Processing mode on and off, but will always remain **Off** when the folder **only contains one text file**. The program will ask users to choose a Return Mode before perform any action. [^3] 
 Under Batch Mode, **all** text files in the destination path will be read in **every** action taken.
 
 ## Modification 
@@ -200,8 +200,8 @@ This function is used in `Word_Count()`, `Word_Freq()`, `Char_Freq()` and `Print
 **Raises:**
 - **OutofRangeError** - The index inputted is larger than the menu shown.
 
-[^1]: The path should be the **folder** contain the text file, not the direct  path to the text file. Or otherwise the program will stuck at file select section.  
-[^2]: You can type "l" to refer to the text file from previous run. (Cannot be use in first run)    
+[^1]: The path should be the **folder** contain the text file, not the direct  path to the text file.
+[^2]: You can type "l" to refer to the text file from previous run. (Cannot be used in first run)    
 [^3]: When Batch Mode is on, return mode cannot be changed and Option "Always Ask" is unusable.  
 [^4]: This will be reset to default after the executable restart.  
 [^5]: All copying of source code should follow the GNU License.  
