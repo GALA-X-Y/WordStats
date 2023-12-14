@@ -205,28 +205,34 @@ procedure Word_Count(rfname : String);
 var
   wordno, paghno, i, error : Integer;
   temp, ofname, Reading : String;
-  duallines, dualdull : Boolean;
+  duallines, dualdull, started : Boolean;
 begin
   paghno := 1;
   wordno := 1;
   duallines := False;
   dualdull := False;
+  started := False;
   while not Eof(readfile) do
     begin
       ReadLn(readfile, temp);
       if temp = '' then
         begin
-          if not dualdull then
+          if (not dualdull) and (started) then
             begin
               paghno := paghno + 1;
               dualdull := True;
             end;
-          if (not duallines) and (not dualdull) then
+          if (not duallines) and (not dualdull) and (started) then
             wordno := wordno + 1;
           temp := temp + 'a';
         end
-      else if dualdull then
-        dualdull := False;
+      else
+        begin
+          if not started then
+            started := True;
+          if dualdull then
+            dualdull := False;
+        end;
       if (duallines) and (not CheckWordFinished(temp, 1)) then
         wordno := wordno + 1;
       duallines := False;
